@@ -24,8 +24,3 @@ class WatermarkSize {
         'height': height,
       };
 }
-
-class WatermarkException implements Exception {
-  final String message;
-  WatermarkException(this.message);
-}

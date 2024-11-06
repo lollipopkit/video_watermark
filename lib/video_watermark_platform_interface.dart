@@ -29,6 +29,7 @@ abstract class VideoWatermarkPlatform extends PlatformInterface {
     required String watermarkPath,
     WatermarkPosition position = WatermarkPosition.bottomRight,
     WatermarkSize size = const WatermarkSize(100, 100),
+    double opacity = 1.0,
   }) {
     throw UnimplementedError('addWatermark() has not been implemented.');
   }

@@ -16,12 +16,14 @@ class VideoWatermark {
     required String watermarkPath,
     WatermarkPosition position = WatermarkPosition.bottomRight,
     WatermarkSize size = const WatermarkSize(100, 100),
+    double opacity = 1.0,
   }) {
     return VideoWatermarkPlatform.instance.addWatermark(
       videoPath: videoPath,
       watermarkPath: watermarkPath,
       position: position,
       size: size,
+      opacity: opacity,
     );
   }
 }

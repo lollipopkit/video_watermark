@@ -21,6 +21,7 @@ class MethodChannelVideoWatermark extends VideoWatermarkPlatform {
     required String watermarkPath,
     WatermarkPosition position = WatermarkPosition.bottomRight,
     WatermarkSize size = const WatermarkSize(100, 100),
+    double opacity = 1.0,
   }) async {
     try {
       final String? outputPath = await methodChannel.invokeMethod(
@@ -30,11 +31,12 @@ class MethodChannelVideoWatermark extends VideoWatermarkPlatform {
           'watermarkPath': watermarkPath,
           'position': position.toJson(),
           'size': size.toJson(),
+          'opacity': opacity,
         },
       );
       return outputPath;
-    } on PlatformException catch (e) {
-      throw WatermarkException(e.message ?? 'Unknown error');
+    } on PlatformException catch (_) {
+      rethrow;
     }
   }
 }
