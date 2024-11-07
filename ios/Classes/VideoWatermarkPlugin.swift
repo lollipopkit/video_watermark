@@ -110,7 +110,15 @@ public class VideoWatermarkPlusPlugin: NSObject, FlutterPlugin {
             let watermarkLayer = CALayer()
             
             // 获取视频尺寸
-            let videoSize = assetTrack.naturalSize
+            var videoSize = assetTrack.naturalSize
+
+            // 添加视频方向修正
+            let assetInfo = orientationFromTransform(assetTrack.preferredTransform)
+            // 如果视频是竖向的，需要交换宽高
+            if assetInfo.isPortrait {
+                videoSize = CGSize(width: videoSize.height, height: videoSize.width)
+            }
+
             parentLayer.frame = CGRect(origin: .zero, size: videoSize)
             videoLayer.frame = CGRect(origin: .zero, size: videoSize)
             
@@ -142,6 +150,7 @@ public class VideoWatermarkPlusPlugin: NSObject, FlutterPlugin {
             instruction.timeRange = CMTimeRange(start: .zero, duration: asset.duration)
             let layerInstruction = AVMutableVideoCompositionLayerInstruction(
                 assetTrack: compositionTrack)
+            layerInstruction.setTransform(assetTrack.preferredTransform, at: .zero)
             instruction.layerInstructions = [layerInstruction]
             videoComposition.instructions = [instruction]
             
@@ -192,5 +201,25 @@ public class VideoWatermarkPlusPlugin: NSObject, FlutterPlugin {
         } catch {
             completion(nil, error)
         }
+    }
+
+    // 获取视频方向信息
+    private func orientationFromTransform(_ transform: CGAffineTransform) -> (orientation: UIImage.Orientation, isPortrait: Bool) {
+        var assetOrientation = UIImage.Orientation.up
+        var isPortrait = false
+        
+        if transform.a == 0 && transform.b == 1.0 && transform.c == -1.0 && transform.d == 0 {
+            assetOrientation = .right
+            isPortrait = true
+        } else if transform.a == 0 && transform.b == -1.0 && transform.c == 1.0 && transform.d == 0 {
+            assetOrientation = .left
+            isPortrait = true
+        } else if transform.a == 1.0 && transform.b == 0 && transform.c == 0 && transform.d == 1.0 {
+            assetOrientation = .up
+        } else if transform.a == -1.0 && transform.b == 0 && transform.c == 0 && transform.d == -1.0 {
+            assetOrientation = .down
+        }
+        
+        return (assetOrientation, isPortrait)
     }
 }
